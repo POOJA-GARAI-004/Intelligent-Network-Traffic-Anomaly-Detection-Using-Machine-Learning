@@ -121,7 +121,6 @@ Anomaly detection is used to identify traffic that does not conform to previousl
 This provides an additional detection layer for potentially new or previously unseen attacks.
 
 ### Combined Decision
-
 ┌──────────────────────────────────────────────────────────────────────────────┐
 │                         1. NETWORK / DATA LAYER                              │
 │                                                                              │
@@ -231,7 +230,6 @@ This provides an additional detection layer for potentially new or previously un
 │                                                                              │
 │                  Real-Time / Interactive Security View                       │
 └──────────────────────────────────────────────────────────────────────────────┘
-
 ## Explainable AI
 
 A major component of the system is **Explainable AI (XAI)**.
