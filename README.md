@@ -122,29 +122,115 @@ This provides an additional detection layer for potentially new or previously un
 
 ### Combined Decision
 
-```text
-              Incoming Network Flow
-                       │
-              ┌────────┴────────┐
-              ▼                 ▼
-       Attack Classifier   Anomaly Detector
-              │                 │
-              └────────┬────────┘
-                       ▼
-                Threat Analysis
-                       │
-                       ▼
-                  Risk Score
-                       │
-          ┌────────────┼────────────┐
-          ▼            ▼            ▼
-        Low          Medium        High
-          │            │            │
-          ▼            ▼            ▼
-       Monitor       Warning       Alert
-```
-
----
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                         1. NETWORK / DATA LAYER                              │
+│                                                                              │
+│     Hosts ───── Servers ───── Applications ───── Network Traffic             │
+│                                      │                                       │
+│                         CICIDS2017 / Live Network Flows                      │
+└──────────────────────────────────────┬───────────────────────────────────────┘
+                                       │
+                                       ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                       2. TRAFFIC PROCESSING LAYER                            │
+│                                                                              │
+│                    Traffic Collection & Preprocessing                        │
+│                                                                              │
+│     Cleaning → Missing/Invalid Values → Encoding → Scaling → Validation      │
+│                                      │                                       │
+│                                      ▼                                       │
+│                           Feature Engineering                               │
+│                                                                              │
+│           Feature Extraction → Feature Selection → Transformation            │
+└──────────────────────────────────────┬───────────────────────────────────────┘
+                                       │
+                                       ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                    3. INTELLIGENT DETECTION LAYER                            │
+│                                                                              │
+│                         Incoming Network Flow                                │
+│                                  │                                           │
+│                    ┌─────────────┴─────────────┐                             │
+│                    │                           │                             │
+│                    ▼                           ▼                             │
+│          ┌───────────────────┐       ┌────────────────────┐                  │
+│          │ Known Attack      │       │ Anomaly Detection  │                  │
+│          │ Classification    │       │                    │                  │
+│          │                   │       │ Isolation Forest   │                  │
+│          │ Random Forest     │       │ Autoencoder        │                  │
+│          │ XGBoost           │       │                    │                  │
+│          └─────────┬─────────┘       └──────────┬─────────┘                  │
+│                    │                            │                            │
+│                    ▼                            ▼                            │
+│             Attack Label                 Anomaly Score                       │
+│                    │                            │                            │
+│                    └──────────────┬─────────────┘                            │
+│                                   ▼                                          │
+│                          ┌─────────────────┐                                 │
+│                          │ Decision Engine │                                 │
+│                          └────────┬────────┘                                 │
+│                                   │                                          │
+│                     ┌─────────────┼──────────────┐                           │
+│                     ▼             ▼              ▼                           │
+│                  NORMAL      KNOWN ATTACK    ANOMALY                         │
+│                     │             │              │                           │
+│                     │             │              ▼                           │
+│                     │             │       Potential Unknown                 │
+│                     │             │            Threat                        │
+└─────────────────────┼─────────────┼──────────────┼───────────────────────────┘
+                      │             │              │
+                      └─────────────┴──────┬───────┘
+                                           │
+                                           ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                       4. THREAT ANALYSIS LAYER                              │
+│                                                                              │
+│                         Threat Analysis                                      │
+│                              │                                               │
+│              ┌───────────────┴────────────────┐                              │
+│              ▼                                ▼                              │
+│      Explainable AI                    Risk Assessment                       │
+│      • SHAP                            • Confidence                          │
+│      • Feature Importance              • Anomaly Score                       │
+│      • Key Contributing Features       • Threat Severity                     │
+│              │                                │                              │
+│              └───────────────┬────────────────┘                              │
+│                              ▼                                               │
+│                       Risk Calculation                                       │
+│                              │                                               │
+│              ┌───────────────┼───────────────┐                              │
+│              ▼               ▼               ▼                              │
+│           LOW RISK      MEDIUM RISK      HIGH/CRITICAL                       │
+└────────────────────────────────┬─────────────────────────────────────────────┘
+                                 │
+                                 ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                        5. ALERT MANAGEMENT LAYER                             │
+│                                                                              │
+│                         Security Event                                       │
+│                              │                                               │
+│                              ▼                                               │
+│                        Alert Manager                                          │
+│                              │                                               │
+│             ┌────────────────┼─────────────────┐                             │
+│             ▼                ▼                 ▼                             │
+│          Monitor          Warning          Critical                           │
+│                                                                              │
+│              Alert → Threat Type → Severity → Explanation                    │
+└────────────────────────────────┬─────────────────────────────────────────────┘
+                                 │
+                                 ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                    6. SECURITY MONITORING / DASHBOARD                        │
+│                                                                              │
+│   ┌────────────────┬────────────────┬────────────────┬──────────────────┐   │
+│   │ Traffic         │ Attacks        │ Anomalies      │ Risk Levels      │   │
+│   ├────────────────┼────────────────┼────────────────┼──────────────────┤   │
+│   │ Attack Types    │ Threat Trends  │ Alerts         │ XAI Analysis     │   │
+│   └────────────────┴────────────────┴────────────────┴──────────────────┘   │
+│                                                                              │
+│                  Real-Time / Interactive Security View                       │
+└──────────────────────────────────────────────────────────────────────────────┘
 
 ## Explainable AI
 
